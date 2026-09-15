@@ -16,16 +16,21 @@ npm run dev          # http://localhost:3000
 ## Build
 
 ```bash
-npm run build        # static export to out/
+npm run build
+npm start            # preview the production build
 ```
 
-`output: "export"` in `next.config.ts` means `next build` prerenders everything
-to `out/`, deployable to any static host with no Node runtime. There is no
-`npm start` — serve `out/` directly:
+Every route is statically prerendered at build time — the build output marks
+them all `○ (Static)` — so deploys serve prebuilt HTML with no per-request
+rendering. On Vercel this needs no configuration: the default Next.js preset
+is correct, and there should be no `vercel.json` and no `outputDirectory`
+override.
 
-```bash
-npx serve out
-```
+To build a portable, host-anywhere copy instead, add `output: "export"` and
+`images.unoptimized: true` to `next.config.ts` and point the host at `out/`.
+Note that on Vercel a static export also needs `"framework": null` in
+`vercel.json`, or the Next.js builder looks for a `routes-manifest.json` that
+an export never emits.
 
 ## Verify before claiming done
 
