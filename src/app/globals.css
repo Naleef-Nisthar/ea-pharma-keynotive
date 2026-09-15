@@ -1,0 +1,201 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   COLOUR VALUES LIVE IN src/content/site.ts - NOT HERE.
+   The `brand.color` object there is injected as inline custom properties by
+   src/app/layout.tsx. This file only maps those properties onto Tailwind's
+   token names and defines structural styles.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+
+  /* The one saturated colour in the system.
+     `accent` is for FILLS (buttons, ticks, spec marks) and for text on dark
+     grounds. `accent-text` is the darker tone for teal text on light
+     grounds, where the bright teal fails contrast. */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-text: var(--accent-text);
+
+  /* Inverted band used by Science into Practice, Peer Learning, Final CTA. */
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+
+  /* shadcn primitives map `primary` onto our ink so buttons inherit the brand. */
+  --color-primary: var(--ink);
+  --color-primary-foreground: var(--ink-foreground);
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+  --color-destructive: oklch(0.577 0.245 27.325);
+
+  --font-sans: var(--font-inter);
+  /* Mono carries real data only - stage numbers, pillar indices, spec labels,
+     tabular figures. Never used as decoration. */
+  --font-mono: var(--font-jetbrains-mono);
+  /* Display face. Headline sizes only; body voice stays Inter. */
+  --font-display: var(--font-space-grotesk);
+
+  /* Card and panel titles. Three tokens, not eight inline pixel values —
+     without these the page has a list of ad-hoc sizes rather than a scale. */
+  --text-card-title: 1.0625rem;
+  --text-card-title--line-height: 1.35;
+  --text-card-title-lg: 1.25rem;
+  --text-card-title-lg--line-height: 1.3;
+  --text-panel-title: 1.5rem;
+  --text-panel-title--line-height: 1.2;
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-3xl: calc(var(--radius) * 3);
+}
+
+:root {
+  --radius: 0.375rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  html {
+    @apply font-sans;
+    /* No `scroll-behavior: smooth` here. Lenis owns scrolling (see
+       components/providers/smooth-scroll.tsx) and the CSS property fights it,
+       producing a double-eased jump on anchor links. When Lenis is disabled
+       for reduced motion, plain instant scrolling is the correct fallback. */
+  }
+
+  /* Anchored sections must clear the fixed header when jumped to. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* One visible focus treatment for the whole site. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* The display grotesk runs optically loose at headline sizes; pull it in.
+     Attribute selector, not `.font-display` - a bare class here collides with
+     Tailwind's own `.font-display` utility at equal specificity, leaving the
+     two rules to fight over source order. */
+  [class~="font-display"] {
+    letter-spacing: -0.028em;
+    font-weight: 600;
+  }
+
+  /* Figures that sit in a column or get compared must not jitter between
+     widths. Applies to every mono run, which is data by definition here. */
+  [class~="font-mono"] {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer base {
+  /* tw-animate-css ships no reduced-motion handling of its own, and the
+     Radix dialog's enter/exit is the only motion on the site not written by
+     hand. Neutralise the transform part of it here — the opacity crossfade
+     still runs, so the state change keeps a visible cue rather than becoming
+     an instant pop. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-state="open"],
+    [data-state="closed"] {
+      --tw-enter-scale: 1;
+      --tw-exit-scale: 1;
+      --tw-enter-translate-x: 0;
+      --tw-enter-translate-y: 0;
+      --tw-exit-translate-x: 0;
+      --tw-exit-translate-y: 0;
+    }
+  }
+}
+
+@layer base {
+  /* Elements animated in by GSAP start hidden to avoid a flash of
+     un-animated content. Every consumer MUST set autoAlpha in its useGSAP
+     callback, including on the reduced-motion path. */
+  .gsap-hidden {
+    visibility: hidden;
+  }
+}
+
+@layer components {
+  /* ── The specification band ───────────────────────────────────────────────
+     This site's signature. A measured value judged against a justified
+     boundary is the central idea of specification-setting, method validation
+     and control strategy - the subject the whole business teaches. So the
+     section divider is not a plain rule: it is a tolerance interval, with
+     marked limits and a centre tick.
+
+     Structure: a hairline that fades at both ends, carrying two upright
+     limit marks and a centre tick drawn as background layers. Pure CSS, no
+     extra DOM, and it degrades to a plain hairline if gradients fail. */
+  .spec-band {
+    height: 9px;
+    background-image:
+      /* centre tick */
+      linear-gradient(var(--accent), var(--accent)),
+      /* right limit mark */ linear-gradient(var(--border), var(--border)),
+      /* left limit mark */ linear-gradient(var(--border), var(--border)),
+      /* the measured line */
+        linear-gradient(
+          to right,
+          transparent,
+          var(--border) 8%,
+          var(--border) 92%,
+          transparent
+        );
+    background-repeat: no-repeat;
+    background-position:
+      center center,
+      calc(50% + 4.5rem) center,
+      calc(50% - 4.5rem) center,
+      center center;
+    background-size:
+      1px 9px,
+      1px 5px,
+      1px 5px,
+      100% 1px;
+  }
+
+  /* A hairline that fades at both ends. */
+  .rule-fade {
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--border) 12%,
+      var(--border) 88%,
+      transparent
+    );
+  }
+}

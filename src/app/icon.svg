@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#1B2432"/>
+  <!-- The specification band, reduced to a favicon: two limits, a centre
+       tick, and a trace crossing them. -->
+  <line x1="6" y1="10" x2="26" y2="10" stroke="#2AA89B" stroke-width="1.25" stroke-dasharray="2 2.5" opacity="0.55"/>
+  <line x1="6" y1="22" x2="26" y2="22" stroke="#2AA89B" stroke-width="1.25" stroke-dasharray="2 2.5" opacity="0.55"/>
+  <path d="M5 25 C 10 24.5, 12 20, 16 17 C 19.5 14.5, 22 15.5, 27 14"
+        fill="none" stroke="#2AA89B" stroke-width="2.25" stroke-linecap="round"/>
+</svg>
