@@ -3,102 +3,121 @@ import {
   ArrowLink,
   Chip,
   Container,
-  Eyebrow,
   Headline,
-  Index,
   Lede,
   Section,
+  SectionMarker,
 } from "@/components/section";
-import { Icon } from "@/components/icon";
 import { Reveal, RevealGroup } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
 /**
- * Six pillars, but not six identical cards.
+ * The six training areas, as a numbered index rather than a card grid.
  *
- * Digital bioprocessing is the emerging focus the business is actively
- * pushing, so it spans two columns and carries a heavier treatment. Equal
- * weight across every card would leave the section with no entry point, and
- * would misrepresent where the emphasis actually sits.
+ * This is a curriculum contents page, so it is set like one: full-width rows
+ * with the ordinal hung in its own column, the title at display size, and the
+ * topic list running alongside. A reader scanning for their discipline gets
+ * six left-aligned titles in a single column instead of six boxes to
+ * triangulate between.
+ *
+ * Digital bioprocessing is the emerging focus the business is pushing, so its
+ * row inverts onto the ink ground — the one break in the rhythm, which is what
+ * makes it read as emphasis rather than decoration.
  */
 export function Pillars() {
   return (
     <Section id={pillars.id} size="lg">
       <Container>
-        <Reveal className="max-w-2xl">
-          <Eyebrow className="text-muted-foreground">{pillars.eyebrow}</Eyebrow>
-          <Headline text={pillars.title} className="mt-6" />
-          <Lede className="mt-6">{pillars.body}</Lede>
+        <Reveal>
+          <SectionMarker n={2} label={pillars.eyebrow} />
+          <div className="mt-10 max-w-3xl">
+            <Headline text={pillars.title} />
+            <Lede className="mt-6">{pillars.body}</Lede>
+          </div>
         </Reveal>
 
-        <RevealGroup className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup className="border-border mt-16 border-b">
           {pillars.items.map((item, i) => {
             const featured = "featured" in item && item.featured;
 
             return (
-              <Reveal
-                key={item.id}
-                className={cn("h-full", featured && "sm:col-span-2")}
-              >
+              <Reveal key={item.id}>
                 <article
                   className={cn(
-                    "border-border flex h-full flex-col border p-7 sm:p-8",
-                    "[transition-property:border-color] duration-150 ease-out",
-                    featured
-                      ? "border-accent/45 bg-card"
-                      : "bg-card hover:border-accent/40",
+                    "border-border border-t",
+                    // The inverted row bleeds to the container edges so the
+                    // ground change reads as a band across the page, not as a
+                    // card that happens to be dark.
+                    featured &&
+                      "bg-ink text-ink-foreground -mx-5 px-5 sm:-mx-8 sm:px-8",
                   )}
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <Index n={i + 1} />
-                    <Icon
-                      name={item.icon}
+                  <div className="grid gap-6 py-9 lg:grid-cols-[auto_minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10">
+                    {/* The ordinal hangs in its own column, giving the section
+                        a spine the eye can run down. */}
+                    <span
                       className={cn(
-                        "size-5 shrink-0",
-                        featured ? "text-accent-text" : "text-muted-foreground",
+                        "font-mono text-[0.68rem] tracking-[0.16em] lg:pt-2",
+                        featured
+                          ? "text-ink-foreground/50"
+                          : "text-muted-foreground/60",
                       )}
-                    />
-                  </div>
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
 
-                  {featured && (
-                    <p className="text-accent-text mt-5 font-mono text-[0.6rem] tracking-[0.16em] uppercase">
-                      {pillars.featuredLabel}
-                    </p>
-                  )}
+                    <div>
+                      {featured && (
+                        <p className="text-accent mb-3 font-mono text-[0.6rem] tracking-[0.16em] uppercase">
+                          {pillars.featuredLabel}
+                        </p>
+                      )}
+                      <h3 className="font-display text-[1.375rem] leading-tight text-balance sm:text-[1.625rem]">
+                        {item.title}
+                      </h3>
+                      <p
+                        className={cn(
+                          "mt-4 max-w-[52ch] text-sm leading-relaxed",
+                          featured
+                            ? "text-ink-foreground/70"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        {item.body}
+                      </p>
+                      <ArrowLink
+                        href={brand.links.programmes}
+                        className={cn("mt-5", featured && "text-accent")}
+                      >
+                        {item.cta}
+                      </ArrowLink>
+                    </div>
 
-                  <h3
-                    className={cn(
-                      "font-display leading-tight text-balance",
-                      featured ? "mt-3 text-[1.75rem]" : "mt-5 text-xl",
-                    )}
-                  >
-                    {item.title}
-                  </h3>
-
-                  <p
-                    className={cn(
-                      "text-muted-foreground mt-4 leading-relaxed",
-                      featured ? "max-w-[58ch] text-[0.9375rem]" : "text-sm",
-                    )}
-                  >
-                    {item.body}
-                  </p>
-
-                  <div className="mt-8 flex-1">
-                    <p className="text-muted-foreground/70 font-mono text-[0.62rem] tracking-[0.16em] uppercase">
-                      {pillars.topicsLabel}
-                    </p>
-                    <ul className="mt-4 flex flex-wrap gap-1.5">
-                      {item.topics.map((topic) => (
-                        <Chip key={topic}>{topic}</Chip>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="border-border mt-8 border-t pt-2">
-                    <ArrowLink href={brand.links.programmes}>
-                      {item.cta}
-                    </ArrowLink>
+                    <div className="lg:pt-1">
+                      <p
+                        className={cn(
+                          "font-mono text-[0.62rem] tracking-[0.16em] uppercase",
+                          featured
+                            ? "text-ink-foreground/50"
+                            : "text-muted-foreground/70",
+                        )}
+                      >
+                        {pillars.topicsLabel}
+                      </p>
+                      <ul className="mt-4 flex flex-wrap gap-1.5">
+                        {item.topics.map((topic) => (
+                          <Chip
+                            key={topic}
+                            className={cn(
+                              featured &&
+                                "border-ink-foreground/25 text-ink-foreground/80",
+                            )}
+                          >
+                            {topic}
+                          </Chip>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </article>
               </Reveal>

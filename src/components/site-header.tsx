@@ -76,12 +76,12 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop */}
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
+        <nav className="hidden items-center gap-5 lg:flex xl:gap-7" aria-label="Main">
           {nav.items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="hover:text-accent-text inline-flex min-h-11 items-center text-sm font-medium transition-colors duration-150 ease-out"
+              className="hover:text-accent-text inline-flex min-h-11 items-center text-sm font-medium whitespace-nowrap transition-colors duration-150 ease-out"
             >
               {item.label}
             </Link>

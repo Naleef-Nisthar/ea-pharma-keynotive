@@ -2,68 +2,73 @@ import { audience } from "@/content/site";
 import {
   Chip,
   Container,
-  Eyebrow,
   Headline,
   Lede,
   Section,
+  SectionMarker,
 } from "@/components/section";
 import { Reveal, RevealGroup } from "@/components/motion/reveal";
 
 /**
- * Who the programmes are for.
+ * Who the programmes are for, as a definition list.
  *
- * Five groups into a three-column grid leaves an awkward tail, so the last card
- * spans both columns at md (where it would otherwise sit alone) and returns to
- * a single column at lg (where five cards fill 3 + 2 and the gap falls at the
- * end of the row rather than mid-grid).
+ * Each group is a term and its definition, which is what a glossary is — so it
+ * is marked up as one (`<dl>`/`<dt>`/`<dd>`) rather than as five cards. Five
+ * items never divide cleanly into a three-column grid, and the card version had
+ * to special-case the tail to hide that; rows have no such problem and take any
+ * count.
  *
- * The body paragraph takes the free space (`flex-1`) so the roles block sits at
- * the bottom of every card and the dividers line up across a row regardless of
- * how long the paragraph runs.
+ * The term hangs in a narrow left column at display size so a reader scanning
+ * for their own function gets five left-aligned labels in one line of sight,
+ * with the description and role chips carried in the wider right column.
+ *
+ * Each row is its own `<dl>` rather than one list wrapping all five, because
+ * the reveal wrappers have to sit between the list and its pairs and a `<dl>`
+ * cannot contain them. See the note at the list itself.
  */
 export function Audience() {
   return (
     <Section id={audience.id}>
       <Container>
         <Reveal>
-          <div className="max-w-2xl">
-            <Eyebrow className="text-muted-foreground">
-              {audience.eyebrow}
-            </Eyebrow>
-            <Headline text={audience.title} className="mt-5" />
+          <SectionMarker n={6} label={audience.eyebrow} />
+          <div className="mt-10 max-w-2xl">
+            <Headline text={audience.title} />
             <Lede className="mt-6">{audience.body}</Lede>
           </div>
         </Reveal>
 
-        <RevealGroup className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {audience.items.map((item, i) => (
-            <Reveal
-              key={item.category}
-              className={
-                i === audience.items.length - 1
-                  ? "md:col-span-2 lg:col-span-1"
-                  : undefined
-              }
-            >
-              <article className="border-border flex h-full flex-col rounded-sm border p-6">
-                <h3 className="text-card-title font-semibold tracking-[-0.011em]">
+        <RevealGroup className="border-border mt-16 border-b">
+          {audience.items.map((item) => (
+            <Reveal key={item.category}>
+              {/* One `<dl>` per row rather than one wrapping all five: the
+                  reveal wrappers sit between the list and its pairs, and a
+                  `<dl>` may not contain arbitrary elements. A list of one pair
+                  is still a definition list, and the term/description
+                  association — the part assistive technology uses — survives
+                  intact either way. */}
+              <dl className="border-border grid gap-4 border-t py-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,2fr)] md:gap-12">
+                <dt className="font-display text-[1.125rem] leading-tight text-balance sm:text-[1.25rem]">
                   {item.category}
-                </h3>
-                <p className="text-muted-foreground mt-3 flex-1 text-sm leading-relaxed text-pretty">
-                  {item.body}
-                </p>
+                </dt>
 
-                <div className="border-border mt-8 border-t pt-5">
-                  <p className="text-muted-foreground/70 font-mono text-[0.6rem] tracking-[0.16em] uppercase">
-                    {audience.rolesLabel}
+                <dd className="ms-0">
+                  <p className="text-muted-foreground max-w-[62ch] text-sm leading-relaxed text-pretty">
+                    {item.body}
                   </p>
-                  <ul className="mt-4 flex flex-wrap gap-1.5">
-                    {item.roles.map((role) => (
-                      <Chip key={role}>{role}</Chip>
-                    ))}
-                  </ul>
-                </div>
-              </article>
+
+                  <div className="mt-6">
+                    <p className="text-muted-foreground/70 font-mono text-[0.6rem] tracking-[0.16em] uppercase">
+                      {audience.rolesLabel}
+                    </p>
+                    <ul className="mt-3 flex flex-wrap gap-1.5">
+                      {item.roles.map((role) => (
+                        <Chip key={role}>{role}</Chip>
+                      ))}
+                    </ul>
+                  </div>
+                </dd>
+              </dl>
             </Reveal>
           ))}
         </RevealGroup>

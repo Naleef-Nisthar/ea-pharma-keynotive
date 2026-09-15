@@ -3,7 +3,13 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
-import { brand, hero } from "@/content/site";
+import {
+  brand,
+  hero,
+  lifecycle,
+  pillars,
+  programmes,
+} from "@/content/site";
 import { Container, Cta, Eyebrow, renderEmphasis } from "@/components/section";
 
 /**
@@ -136,54 +142,97 @@ export function Hero() {
       </div>
 
       <Container className="relative z-10">
-        <div ref={root} className="max-w-3xl">
-          <div data-anim className="gsap-hidden">
-            <Eyebrow className="text-muted-foreground">{hero.eyebrow}</Eyebrow>
+        {/* Asymmetric split: the headline holds seven columns and the spec
+            readout four, with a gutter between. A single centred or
+            full-width column is what every templated hero does; an off-centre
+            measure with a data panel beside it is what an instrument readout
+            looks like, which is the subject. */}
+        <div
+          ref={root}
+          className="grid items-end gap-12 lg:grid-cols-12 lg:gap-16"
+        >
+          <div className="lg:col-span-7">
+            <div data-anim className="gsap-hidden">
+              <Eyebrow className="text-muted-foreground">{hero.eyebrow}</Eyebrow>
+            </div>
+
+            <h1
+              data-anim
+              className="gsap-hidden font-display mt-7 text-[clamp(2.35rem,1.3rem+4.6vw,4.25rem)] leading-[1.02] text-balance"
+            >
+              {renderEmphasis(hero.headline)}
+            </h1>
+
+            <p
+              data-anim
+              className="gsap-hidden text-muted-foreground mt-7 max-w-[58ch] text-base leading-relaxed text-pretty sm:text-lg"
+            >
+              {hero.body}
+            </p>
+
+            <div
+              data-anim
+              className="gsap-hidden mt-10 flex flex-col gap-3 sm:flex-row"
+            >
+              <Cta href={brand.links.programmes}>{hero.primaryCta}</Cta>
+              <Cta href={hero.secondaryHref} tone="outline">
+                {hero.secondaryCta}
+              </Cta>
+            </div>
           </div>
 
-          <h1
+          {/* Scope readout. Not invented data — it counts what is actually on
+              the page, so the figures stay true if the content changes. */}
+          <div
             data-anim
-            className="gsap-hidden font-display mt-7 text-[clamp(2.35rem,1.4rem+4.2vw,4rem)] leading-[1.04] text-balance"
+            className="gsap-hidden border-border lg:col-span-5 lg:border-l lg:pl-10"
           >
-            {renderEmphasis(hero.headline)}
-          </h1>
+            <dl className="grid grid-cols-3 gap-6 lg:grid-cols-1 lg:gap-0">
+              {[
+                { v: pillars.items.length, k: "Training areas" },
+                { v: programmes.items.length, k: "Masterclasses" },
+                { v: lifecycle.items.length, k: "Lifecycle stages" },
+              ].map((s, i) => (
+                <div
+                  key={s.k}
+                  className={
+                    i > 0
+                      ? "border-border lg:mt-5 lg:border-t lg:pt-5"
+                      : undefined
+                  }
+                >
+                  <dt className="text-muted-foreground/70 font-mono text-[0.6rem] tracking-[0.16em] uppercase">
+                    {s.k}
+                  </dt>
+                  <dd className="font-display mt-1.5 text-[2rem] leading-none tabular-nums">
+                    {String(s.v).padStart(2, "0")}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
 
-          <p
-            data-anim
-            className="gsap-hidden text-muted-foreground mt-7 max-w-[62ch] text-base leading-relaxed text-pretty sm:text-lg"
-          >
-            {hero.body}
+        </div>
+
+        {/* Runs the full measure beneath both columns, closing the hero. */}
+        <div
+          data-anim
+          className="gsap-hidden border-border/70 mt-14 flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <p className="text-muted-foreground max-w-[58ch] text-sm leading-relaxed text-pretty">
+            {hero.footnote}
           </p>
-
-          <div
-            data-anim
-            className="gsap-hidden mt-10 flex flex-col gap-3 sm:flex-row"
-          >
-            <Cta href={brand.links.programmes}>{hero.primaryCta}</Cta>
-            <Cta href={hero.secondaryHref} tone="outline">
-              {hero.secondaryCta}
-            </Cta>
-          </div>
-
-          <div
-            data-anim
-            className="gsap-hidden border-border/70 mt-14 max-w-xl border-t pt-6"
-          >
-            <p className="text-muted-foreground text-sm leading-relaxed text-pretty">
-              {hero.footnote}
-            </p>
-            <p className="text-muted-foreground mt-3 font-mono text-[0.68rem] tracking-[0.14em] uppercase">
-              Operated by{" "}
-              <Link
-                href={brand.links.operator}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="decoration-accent/50 hover:text-accent-text text-foreground underline underline-offset-4 transition-colors duration-150 ease-out"
-              >
-                {brand.operator}
-              </Link>
-            </p>
-          </div>
+          <p className="text-muted-foreground shrink-0 font-mono text-[0.68rem] tracking-[0.14em] uppercase">
+            Operated by{" "}
+            <Link
+              href={brand.links.operator}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="decoration-accent/50 hover:text-accent-text text-foreground underline underline-offset-4 transition-colors duration-150 ease-out"
+            >
+              {brand.operator}
+            </Link>
+          </p>
         </div>
       </Container>
     </section>

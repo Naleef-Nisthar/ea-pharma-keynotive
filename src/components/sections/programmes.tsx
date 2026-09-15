@@ -9,10 +9,10 @@ import {
   ArrowLink,
   Chip,
   Container,
-  Eyebrow,
   Headline,
   Lede,
   Section,
+  SectionMarker,
 } from "@/components/section";
 import { Reveal, RevealGroup } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
@@ -42,20 +42,20 @@ export function Programmes() {
   return (
     <Section id={programmes.id}>
       <Container>
-        <Reveal className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            <Eyebrow className="text-muted-foreground">
-              {programmes.eyebrow}
-            </Eyebrow>
-            <Headline text={programmes.title} className="mt-6" />
-            <Lede className="mt-6">{programmes.body}</Lede>
+        <Reveal>
+          <SectionMarker n={4} label={programmes.eyebrow} />
+          <div className="mt-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-3xl">
+              <Headline text={programmes.title} />
+              <Lede className="mt-6">{programmes.body}</Lede>
+            </div>
+            <ArrowLink
+              href={brand.links.programmes}
+              className="shrink-0 whitespace-nowrap"
+            >
+              {programmes.directoryCta}
+            </ArrowLink>
           </div>
-          <ArrowLink
-            href={brand.links.programmes}
-            className="shrink-0 whitespace-nowrap"
-          >
-            {programmes.directoryCta}
-          </ArrowLink>
         </Reveal>
 
         <div className="mt-12">
@@ -115,48 +115,52 @@ export function Programmes() {
             </button>
           </div>
         ) : (
-          <RevealGroup className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          // Editorial rows, not cards: programme titles run to twelve words and
+          // wrap to four cramped lines in a three-up grid.
+          <RevealGroup className="border-border mt-10 border-b">
             {visible.map((item) => (
-              <Reveal key={item.id} className="h-full">
-                <article className="border-border bg-card hover:border-accent/40 flex h-full flex-col border p-7 [transition-property:border-color] duration-150 ease-out">
-                  <p className="text-accent-text font-mono text-[0.62rem] tracking-[0.16em] uppercase">
-                    {item.category}
-                  </p>
+              <Reveal key={item.id}>
+                <article className="border-border hover:bg-muted/50 group border-t [transition-property:background-color] duration-150 ease-out">
+                  <div className="grid gap-5 px-2 py-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-12">
+                    <div>
+                      <p className="text-accent-text font-mono text-[0.62rem] tracking-[0.16em] uppercase">
+                        {item.category}
+                      </p>
 
-                  <h3 className="font-display mt-4 text-lg leading-tight text-balance">
-                    {item.title}
-                  </h3>
+                      <h3 className="font-display mt-3 text-[1.25rem] leading-tight text-balance sm:text-[1.375rem]">
+                        {item.title}
+                      </h3>
 
-                  <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
-                    {item.body}
-                  </p>
+                      {"trainerName" in item && item.trainerName && (
+                        <p className="text-muted-foreground mt-3 font-mono text-[0.62rem] tracking-[0.14em]">
+                          {item.trainerName}
+                        </p>
+                      )}
+                    </div>
 
-                  {"trainerName" in item && item.trainerName && (
-                    <p className="text-muted-foreground mt-5 font-mono text-[0.62rem] tracking-[0.14em]">
-                      {item.trainerName}
-                    </p>
-                  )}
+                    <div className="flex flex-col items-start">
+                      <p className="text-muted-foreground max-w-[54ch] text-sm leading-relaxed">
+                        {item.body}
+                      </p>
 
-                  <div className="mt-6 flex-1">
-                    <ul className="flex flex-wrap gap-1.5">
-                      {item.topics.map((t) => (
-                        <Chip key={t}>{t}</Chip>
-                      ))}
-                    </ul>
-                  </div>
+                      <ul className="mt-5 flex flex-wrap gap-1.5">
+                        {item.topics.map((t) => (
+                          <Chip key={t}>{t}</Chip>
+                        ))}
+                      </ul>
 
-                  <div className="border-border mt-8 border-t pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setOpen(item)}
-                      className="group hover:text-accent-text inline-flex min-h-11 items-center gap-2 text-sm font-medium transition-colors duration-150 ease-out"
-                    >
-                      {programmes.labels.details}
-                      <ArrowUpRight
-                        aria-hidden
-                        className="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                      />
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => setOpen(item)}
+                        className="hover:text-accent-text mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-medium transition-colors duration-150 ease-out"
+                      >
+                        {programmes.labels.details}
+                        <ArrowUpRight
+                          aria-hidden
+                          className="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        />
+                      </button>
+                    </div>
                   </div>
                 </article>
               </Reveal>

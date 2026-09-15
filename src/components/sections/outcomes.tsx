@@ -1,53 +1,65 @@
 import { outcomes } from "@/content/site";
 import {
   Container,
-  Eyebrow,
   Headline,
-  Index,
   Lede,
   Section,
+  SectionMarker,
 } from "@/components/section";
 import { Reveal, RevealGroup } from "@/components/motion/reveal";
 
 /**
  * Professional outcomes — the page's inverted band.
  *
- * No icons: the surrounding sections already carry a glyph per card, and a
- * third icon grid would turn a real distinction into wallpaper. The ordinal
- * carries the same wayfinding job with none of the noise, and here the sequence
- * is a genuine list of six, so `Index` is honest.
+ * Six statements, set as statements. Every other section on the page carries
+ * its titles at body size inside some kind of container; here the title is the
+ * content and the body is the gloss, so the type does the structuring and there
+ * is no container at all. No borders, no boxes, no icons — on ink a border per
+ * item reads as six trapped panels, and the dark ground stays continuous when
+ * nothing is drawn on it.
  *
- * Items are separated by top hairlines rather than boxed: on ink, a full border
- * per card reads as six trapped panels, while a single rule above each item
- * lets the dark ground stay continuous. Hairlines are `ink-foreground/15` —
- * `border-border` is tuned for the light ground and disappears here.
+ * Separation comes from the row gap alone, which is deliberately larger than
+ * the column gap: that difference is what tells the eye to read down each
+ * column rather than across the pair.
+ *
+ * The ordinal sits inline ahead of the title rather than stacked above it, so
+ * the six titles keep a single left edge and the sequence stays legible at a
+ * glance.
  */
 export function Outcomes() {
   return (
     <Section tone="ink">
       <Container>
         <Reveal>
-          <div className="max-w-2xl">
-            <Eyebrow className="text-ink-foreground/60">
-              {outcomes.eyebrow}
-            </Eyebrow>
-            <Headline text={outcomes.title} className="mt-5" />
+          {/* `border-border` and `text-muted-foreground` are tuned for the
+              light page and all but vanish on ink, so the marker is switched
+              to its ink tone. */}
+          <SectionMarker
+            n={5}
+            label={outcomes.eyebrow}
+            tone="ink"
+            className="border-ink-foreground/20"
+          />
+          <div className="mt-10 max-w-2xl">
+            <Headline text={outcomes.title} />
             <Lede className="text-ink-foreground/70 mt-6">{outcomes.body}</Lede>
           </div>
         </Reveal>
 
-        <RevealGroup className="mt-16 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup className="mt-20 grid gap-x-16 gap-y-14 sm:grid-cols-2">
           {outcomes.items.map((item, i) => (
             <Reveal key={item.title}>
-              <article className="border-ink-foreground/15 h-full border-t pt-5">
-                <Index
-                  n={i + 1}
-                  className="text-ink-foreground/45"
-                />
-                <h3 className="mt-4 text-card-title font-semibold tracking-[-0.011em]">
+              <article>
+                <h3 className="font-display text-[1.5rem] leading-[1.18] text-balance">
+                  <span
+                    aria-hidden
+                    className="text-ink-foreground/40 me-3 align-[0.22em] font-mono text-[0.68rem] tracking-[0.16em]"
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                   {item.title}
                 </h3>
-                <p className="text-ink-foreground/70 mt-3 text-sm leading-relaxed text-pretty">
+                <p className="text-ink-foreground/70 mt-4 max-w-[46ch] text-sm leading-relaxed text-pretty">
                   {item.body}
                 </p>
               </article>

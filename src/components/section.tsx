@@ -41,12 +41,73 @@ export function Section({
   );
 }
 
-export function Container({ className, ...props }: ComponentProps<"div">) {
+export function Container({
+  className,
+  width = "default",
+  ...props
+}: ComponentProps<"div"> & { width?: "narrow" | "default" | "wide" }) {
   return (
     <div
-      className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)}
+      className={cn(
+        "mx-auto w-full px-5 sm:px-8",
+        width === "narrow" && "max-w-3xl",
+        width === "default" && "max-w-6xl",
+        // Wide lets a section break the column the rest of the page holds to.
+        // Used sparingly — it only reads as deliberate while it stays rare.
+        width === "wide" && "max-w-[88rem]",
+        className,
+      )}
       {...props}
     />
+  );
+}
+
+/* ── Section marker ─────────────────────────────────────────────────────────
+   A numbered rule that runs above a section's title.
+
+   Every section opening with the same eyebrow/headline/lede stack is what
+   makes a long page read as a template. This is the alternative opening: the
+   section's number set against a full-width hairline, so the page gains a
+   table-of-contents spine and sections can differ from one another at the
+   moment they announce themselves. */
+
+export function SectionMarker({
+  n,
+  label,
+  tone = "default",
+  className,
+}: {
+  n: number;
+  label: string;
+  /** `ink` retunes the rule and label for the inverted ground. */
+  tone?: "default" | "ink";
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-baseline gap-4 border-t pt-4",
+        tone === "ink" ? "border-ink-foreground/20" : "border-border",
+        className,
+      )}
+    >
+      <span
+        className={cn(
+          "font-mono text-[0.68rem] tracking-[0.16em]",
+          tone === "ink" ? "text-accent" : "text-accent-text",
+        )}
+      >
+        {String(n).padStart(2, "0")}
+      </span>
+      <span
+        className={cn(
+          "font-mono text-[0.62rem] tracking-[0.18em] uppercase",
+          tone === "ink" ? "text-ink-foreground/60" : "text-muted-foreground",
+        )}
+      >
+        {label}
+      </span>
+    </div>
   );
 }
 
