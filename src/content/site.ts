@@ -33,7 +33,7 @@ export const brand = {
     allProgrammes: `${KEYNOTIVE}/all-programmes${UTM}`,
     inHouse: `${KEYNOTIVE}/corporate-in-house-training${UTM}`,
     operator: `${KEYNOTIVE}${UTM}`,
-    contact: `${KEYNOTIVE}/contact${UTM}`,
+    contact: `${KEYNOTIVE}/contact-us${UTM}`,
     privacy: `${KEYNOTIVE}/privacy-policy${UTM}`,
     terms: `${KEYNOTIVE}/terms-and-conditions${UTM}`,
     email: "contact@keynotive.io",
